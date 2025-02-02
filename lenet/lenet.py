@@ -13,17 +13,34 @@ class LeNet5(nn.Module):
         self.conv1 = nn.Conv2d(1, 6, 5)  # 1 input channel, 6 output channels, 5x5 kernel
         self.pool = nn.AvgPool2d(2, 2)  # 2x2 kernel, stride 2
         self.conv2 = nn.Conv2d(6, 16, 5)
-        self.fc1 = nn.Linear(16 * 5 * 5, 120)  # 16 channels, 5x5 image size
+        self.fc1 = nn.Linear(16 * 4 * 4, 120)  # 16 channels, 5x5 image size
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, 10)  # 10 output classes
 
+    # def forward(self, x):
+    #     x = self.pool(torch.relu(self.conv1(x)))
+    #     x = self.pool(torch.relu(self.conv2(x)))
+    #     x = x.view(-1, 16 * 5 * 5)  # Flatten the tensor
+    #     x = torch.relu(self.fc1(x))
+    #     x = torch.relu(self.fc2(x))
+    #     x = self.fc3(x)  # No activation before softmax (handled by CrossEntropyLoss)
+    #     return x
+    
     def forward(self, x):
+        print("Input shape:", x.shape)  # Shape at the beginning
+
         x = self.pool(torch.relu(self.conv1(x)))
+        print("Shape after conv1 and pool:", x.shape)
+
         x = self.pool(torch.relu(self.conv2(x)))
-        x = x.view(-1, 16 * 5 * 5)  # Flatten the tensor
+        print("Shape after conv2 and pool:", x.shape)  # Check shape here
+
+        x = x.view(-1, 16 * 4 * 4)  # Flatten the tensor
+        print("Shape after view:", x.shape) #check the shape after flattening
+
         x = torch.relu(self.fc1(x))
         x = torch.relu(self.fc2(x))
-        x = self.fc3(x)  # No activation before softmax (handled by CrossEntropyLoss)
+        x = self.fc3(x)
         return x
 
 if __name__ == '__main__':
